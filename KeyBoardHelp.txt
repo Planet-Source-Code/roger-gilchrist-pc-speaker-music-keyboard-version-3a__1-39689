@@ -1,0 +1,228 @@
+This is Demo of PC speaker music and my keyboard class. VERSION 3a
+
+The program started out from Ovidiu's Nokia Ringtone Player which is why there is Nokia stuff in it but Basica music is far more complex and I have converted from a translate Basica to Nokia and play to a Write and Operate in Basica system which can then translate to Nokia Copmposer and RTTTL. Some of the code is still in transition to this new system and may be a bit wonky (for example in the very buggy  Version 2a the keyboard recorded correctly but played an octave too high). I think I have found most of these but let me know if you find more. Version 2a.a had an error in mouse key duration setting. Squash a bug breed a new one, I guess. Version 3 had a bug which meant that you could not have a dotted note as the first note. Also sharps were not translated properly between modes.
+Apologies to the musical among you for the BasicaRealTranspose routine, I have the data but don't know the correct names for these actions so have just numbered those which seem to have the same name otherwise.
+Hope Version 3a is more stable.
+
+What's a PC Speaker?
+If your computer beeps during start up you have a PC Speaker. If you are using a desktop system and it does not beep then you have turned it off in Setup or it is broken or disconnected. Fix it, one day you will need to hear the POST beep messages that tell you your memory chips need to be replaced or reseat(trust me, I've been there). Some notebooks and portables may lack this feature as the beep could irritate those around you if you are travelling. You may be able to turn it on. You might also try reversing the test for NT or older system and use the Win9x beep system.
+
+The keyboard is stretchable so just drag form border to expand it.
+WARNING: The sound is asynchronous (while a sound or pause is playing you cannot do anything else)
+
+NEW RTTTL support
+RTTTL code support has been added. I have found the code specifications so have adjusted it from version 3. It works on all samples I could find. you will find comments notating how I have implemented it scattered through the code. 
+NOTE the RTTTL sources I found were not always optimized for default duration and octave so the program sometimes produces a string which does not match the built in example string. The actual tune is still the same. 
+
+
+Code conventions used:
+	{Numerical Value}
+	[square brackets = Optional] 
+		
+Basica Format: 
+MN MusicNormal   changes L{Duration} 	MN=D*7/8
+ML Music Legato   changes L{Duration}  	ML=d*1 
+MS Music Staccato changes L{Duration} 	MS=D*3/4
+Tempo =T{Tempovalue} range 25 - 900. You can change tempo as often as you like in Basica. Real Basica minimum was 32 and maximum was 255 but RTTTL is 25 and 900 so I added it to my version as well.
+Pause = P{Duration}[...]
+Note = L{Duration} O{Octave}{Note}[#,+,-][...]
+where:
+	Length = L{Duration} 1 - 64 where 1 is full note and 64 is 1/64 note.
+	Octave = O{Octave}  0 - 6		(Middle C= O4C)
+	A-G	=Note name
+	[#],[+] = sharp  '+' simplifed to '#' by code
+	[-]     = flat   'Note-'
+	[...]   =dotted note. Lengthens note with formula L/((3/2)^DotCount) so 1 dot=L/(3/2); 2 dots=L/(9/4); 3 dots=27/8. Basica recognises multiple dots.
+
+Other codes (Origial to Basica for easy of use the code converts them to more conventional format)
+> or <        = change octave down> or up< for one note only (code converts to format 'O{temporary Octave}Note O{general Octave}')
+A-G + numeral = change the length of one note to the value specified (code converts to format 'L{Temporary Duration} Note L{general Duration}'
+N<NoteValue>  = alternate notation NoteValue is 0(silence) to 84 code converts to A-G code (N0 => P)
+
+N{NoteNumber} which simply numbers the notes across the piano (and NO it is not related to KeyNo and m_KeyNumber in my class(they need the m_isBlack and M_isWhite to work)). Only just added may be buggy. The code translates it to A-G notation before playing.
+NOT SUPPORTED
+MB, MF, X, VarPtr:  Music Background, Music ForeGround and two variable reference codes system are not supported in this program. 
+The asynchronous nature of beep means that MF is always on. The variable reference codes can be replaced by concantation being used to build the command string.
+
+
+Nokia Composer Format:(May not be complete I only know this code from Ovidiu's code and a few downloads I found and the How to enter Composer code I found on net).
+
+Tempo = Don't know range. (RTTTL allows 25 to 900). Code assumes this. You can only set it once (I think) as a seperate element (use the combo box above Play Nokia button).
+Pause = <Duration>- or <Duration>P  (my code coverts '-' to 'P')
+Note = <Duration>[.][#]<Note><Octave>  
+Flats= #<PreviousNote>.  
+[.]   =dotted note. Lengthens note with formula L/((3/2)^DotCount) so 1 dot=L/(3/2); 2 dots=L/(9/4); 3 dots=27/8. Not sure if Nokia recognises multiple dots.
+
+
+
+Composer (How to enter into your phone)
+
+Notes
+Enter notes a - g by pressing keys 1 - 7 i.e.
+1 = c
+2 = d
+3 = e
+4 = f
+5 = g
+6 = a
+7 = b
+
+Duration
+Decrease by pressing 8
+Increase by pressing 9
+Duration steps from 1 to 32 (32 shortest, 1 longest - 1 second)
+
+Octaves
+Press * to cycle through all three octaves
+
+Pause
+Add a pause by pressing 0. You can increase or decrease the pause using keys 8 and 9 as usual.
+
+Sharp (Slighter higher tone)
+To use a sharp press the hash (#) key. A # symbol appears next to the note.
+
+Dotted Note
+To create a dotted note (a note with a short pause) press the note-key (1-7) and hold for a second. A . will appear next to the note.
+
+------------------------------------
+You can edit the text manually but there is little error checking and some errors may cause a crash because of the API call.
+If you build a tune you actually want to keep just cut and paste it and don't forget to record the tempo value.
+
+Nokia now has an extensive auto-correction system (I think I know all the code now).
+-------------------------------------
+
+
+RTTTL Definition (some where on the net)
+
+RTTTL= Ringing Tones text transfer language 
+
+  RTTTL was originally designed and conceived for the Nokring program now available on this site. The rule syntax for this language is described here. 
+ 
+< Back
+
+<ringing-tones-text-transfer-language> :=
+       <name> <sep> [<defaults>] <sep> <note-command>+
+
+<name> := <char>+    ; maximum name length 10 characters (but you will often find tones with longer names. You may find that anything after the 10th character may be ignored however.)
+
+<sep> := ":"
+
+<defaults> := 
+      <def-note-duration> |
+      <def-note-scale> |
+      <def-beats> 
+
+<def-note-duration> := "d=" <duration>
+
+<def-note-scale> := "o=" <scale> 
+
+<def-beats> := "b=" <beats-per-minute>
+
+<beats-per-minute> := 25,28,...,900   ; decimal value
+
+; If not specified, defaults are
+;
+;  4   = duration
+;  6   = scale   
+;  63  = beats-per-minute
+
+
+<note-command> :=
+      [<duration>] <note> [<scale>] [<special-duration>] <delimiter>
+
+
+<duration> :=
+      "1"  |  ; Full 1/1 note
+      "2"  |  ; 1/2 note
+      "4"  |  ; 1/4 note
+      "8"  |  ; 1/8 note
+      "16" |  ; 1/16 note
+      "32" |  ; 1/32 note
+     
+<note> :=
+      "P"  |  ; pause
+      "C"  |
+      "C#" |
+      "D"  |
+      "D#" |
+      "E"  |
+      "F"  |
+      "F#" |
+      "G"  |
+      "G#" |
+      "A"  |
+      "A#" |
+      "H"         
+
+<scale> :=
+      "5" |   ; Note A is 440Hz
+      "6" |   ; Note A is 880Hz
+      "7" |   ; Note A is 1.76 kHz
+      "8"     ; Note A is 3.52 kHz
+
+<special-duration> :=
+      "."     ; Dotted note
+
+<delimiter> := ","
+
+; End of specification
+ 
+
+KEYBOARD PICTURE
+
+From the examples I found I think that Nokia code is restricted to the 3 octaves around middle C and have built restrictions into the Keyboard to
+allow you to limit available keys if you want to write a Nokia ringtone.
+
+When you enter notes with the keyboard the Basica text will fill with a very complex set of Length-Note-Octave structures for each note. If you do note manually enter a Tempo the Nokia Tempo combo value is used. If you do not specify ML, MN or MS then MN is used. When you play the text it will be reduced to a simpler space delimited version with an M value and Tempo added at start. Note unlike Nokia you can change Tempo anywhere you like but each tempo change resets the Nokia Composer Tempo combobox.
+
+VIRTUAL SCORE SHEET
+
+The Virtual Score Sheet is extremely experimental. 
+My knowledge of music notation is based on two years of piano many years ago, a music dictionary and an Indonesian text book meant for year 3 primary school. Apologies to the musical among you.
+
+
+
+Thanks to 
+
+Ovidiu Daniel Diaconescu for inspiration and Beep playing code (NT and above).
+Bob Richards for the Internal Speaker Beep Routines which allow Win 9x and Win NT systems to use Beep. 
+
+'1001 Things To Do With Your IBM PC' by Mark R. Sawusch and Tan A. Summers  1984 TAB Books Inc) for
+'Table 6-1 The Probability Distribution for the Random Selection of Notes' used in BasicaRandomMusic routine
+and code on page 148 for KeyOfXX stuff in BasicaRealTransposer routine
+
+
+Disclaimer
+
+For demonstration purposes only I have included a number of tunes I gathered from the net, Old Basica code and by keying in from scores.
+Various copyrights apply to many of these pieces please do not distribute them commericially. 
+
+The Nokia Composer and RTTTL tunes are from the net; Google search for "nokia ringtone codes" except 'Mission impossible' which is from Ovidiu Daniel Diaconescu's program which inspired me to build this.
+
+The Basica tunes are from 
+
+1.'Komputer Musik Lagu-lagu Daerah' by rijanto Tosin and Firman I.M. (1992)
+(traditional regional tunes of indonesia)
+Kodok Ngorek
+Topi Saya Bundar
+Suwe Ora Jamu
+Gambang Suling
+Surilang
+Meyong
+Ngusik-Asik
+
+2. 'Basic' 2nd Edition(Revised January 1983) Version 1.10 IBM (really need to clear my book stacks)
+Mary has a little lamb
+
+3.'travelling to freedom' song book edited by Tony Newman and Peter Stone which contained the scores I used to enter the following tunes.
+"Sounds of Silence" By Paul Simon
+and the Trad tunes
+"We Shall Overcome"
+"Nearer My God to Thee"
+"Michael haul the boat ashore"D"
+"Silent Night"
+
+
+Copyright 2002 Roger Gilchrist 
+email: rojagilkrist@hotmail.com
+ 
