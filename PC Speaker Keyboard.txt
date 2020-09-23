@@ -1,0 +1,16 @@
+PC SPEAKER MUSIC KEYBOARD Version 3a
+
+Version 3a: fixed bugs: Translation of sharps between codes, first note dotted error
+Added BasicaRealTranspose; Transpose notes properly (I think) Partial only assumes tune is in key of C.
+ 
+Version 3: Added RTTTL support. Cleaned up older code. Basica and Nokia Composer and Nokia RTTTL codes now supported. clsVirtualScoreSheet now draws notes with vertical line in right direction on clef. 
+
+This is a keyboard in a picture box class. The keyboard now supports almost all of the Basica Play command code (excepting those bits that can't be, or don't need to be, reproduced inside Windows). Basica and Nokia Composer and RTTTL code now allow dotted notes. Many examples in each supported code.  There is a player piano mode when playing back code strings. There is a Nokia ringtone safe mode. The keyboard has 4 built-in 'skins' and a safety routine which keeps the colours safe. You can generate random skins and save them to a file for adding new 'skins' to the code. 
+I have incorperated the code necessary to use the class in pre NT systems (thanks to Bob Richards for this code ('Quick Search' for "PC Speaker" to see original) but you will need to download the free .Dll file WIN95IO.DLL which is available from http://www.softcircuits.com (For Win9xMe systems ONLY, the file WIN95IO.DLL must be copied to the Windows/System folder)
+
+The PC Speaker is not a multimedia add-on it is part of most computers' bootup system, the thing that goes beep (just once if all is well). If you don't hear it, check that you have not disabled it from SetUp or disconnected it while tinkering inside your machine. One day you will want to hear it as it signals that something fundemental has gone wrong (over the years; hard drive cables disconnected, unplugged keyboard and loose memory chips in my case).
+
+Also includes a work in progress clsVirtualScoreSheet. View code as traditional score. As you will see this is not fully developed and assumes 4/4 time for all pieces but does not quite achieive it. Useful for inputting from score sheets as you can check that you got the right note and duration. It does not scroll (yet) but it is resizable (just maximize the form). Hope to develop it to allow direct mouse editing of score as another input system.
+
+Comments, suggestions and votes welcome.
+
